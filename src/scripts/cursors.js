@@ -15,10 +15,11 @@ export class Cursors{
     this.diff = { x: null,y: null };
     this.tinyCursor = true;
     this.transitionParticles = false;
-    this.cursor = false;
+    this.cursor = true;
     this.activeLinks();
     this.mousemoveCursor();
     window.addEventListener('resize',(e) => this.init());
+    
   }
 
   mousemoveCursor() {
@@ -69,13 +70,14 @@ export class Cursors{
         viewbox="0 0 ${this.widthContainer} ${this.heightContainer}"
         preserveAspectRatio="${this.preserveAspectRatio || "none"}"
         style="background:${this.backColor || "none"}; cursor:${this.cursor ? "default" : "none"};">
-        ${this.gradientParticles ? this.drawGradient() : ''}
+        
         ${this.maskCursor ? this.drawMaskCursor() : this.drawParticles()}
-        ${this.drawTinyCursor()}
+        
+        
     </svg>`;
     this.svg = this.container.querySelector('svg');
-    this.tinyCursor ? this.nodeCursors = this.container.querySelectorAll('.tiny-cursor circle') : null;
-    this.particles = Array.from(this.container.querySelectorAll('.particles circle'));
+    this.tinyCursor ? this.nodeCursors = this.container.querySelectorAll('.tiny-cursor image') : null;
+    this.particles = Array.from(this.container.querySelectorAll('.particles image'));
     this.sorting === "desc" ? this.sortParticles() : null;
     this.points = Array(this.nbrParticles).fill().map((el,i) => {
       return {
@@ -127,18 +129,39 @@ export class Cursors{
   }
 
   drawParticles() {
+    this.widthContainer = window.innerWidth;
+    this.heightContainer = window.innerHeight;
     return `<g class="particles" filter=${this.filterParticles || "none"}>
-      ${(() => {
-        if (this.strokeGradient) {
-          return `
-          <defs>
-            <linearGradient id=${this.strokeGradient.idStrokeGradient} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color=${this.strokeGradient.color1} />
-              <stop offset="100%" stop-color=${this.strokeGradient.color2} />
-            </linearGradient>
-          </defs>`
-        }
+      
       })()}
+      ${Array(this.nbrParticles).fill().map((_,i) =>
+        `
+
+        <g transform="translate(-100,-100) scale(1,1)">
+        <image
+          href="https://uploads-ssl.webflow.com/639775352ca5c98209b14b9b/63acfebcfdf77fc22d8e7c9a_triip.gif"
+          height="${this.setRadiusParticles(i)}"
+          width="${this.setRadiusParticles(i)}"
+          x=${this.pos.x} y=${this.pos.y}
+          opacity="${this.fillOpacityParticles}"
+          id="${i}">
+        </image>
+        </g>
+        <circle
+          r="${this.setRadiusParticles(i)}"
+          cx=${this.pos.x} cy=${this.pos.y}
+          fill="${this.fillParticles || "none"}"
+          fill-opacity="${this.fillOpacityParticles || 1}"
+          stroke="${this.strokeGradient ? `url(#${this.strokeGradient.idStrokeGradient})` : this.strokeColorParticles}"
+          stroke-width="${this.strokeWidthParticles || 0}"
+          stroke-opacity="${this.strokeOpacityParticles || 1}"
+          id="${i}">
+          
+        </circle>`).join('')}
+    </g>`
+  }
+
+  /* 
       ${Array(this.nbrParticles).fill().map((_,i) =>
         `<circle
           r="${this.setRadiusParticles(i)}"
@@ -151,14 +174,14 @@ export class Cursors{
           id="${i}">
         </circle>`).join('')}
     </g>`
-  }
+  } */
 
   setParticles() {
     if (this.transitionParticles) {
       for (const [i,particle] of this.particles.entries()) {
-        particle.setAttribute('cx',this.pos.x )
-        particle.setAttribute('cy',this.pos.y);
-        particle.style.transitionProperty = "cx,cy"
+        particle.setAttribute('x',this.pos.x )
+        particle.setAttribute('y',this.pos.y);
+        particle.style.transitionProperty = "x,y"
         particle.style.transitionDuration = `${this.transitionParticles.duration+i*this.transitionParticles.delay}ms `;
         particle.style.transitionTimingFunction = this.transitionParticles.easing;
       }
@@ -169,8 +192,8 @@ export class Cursors{
         this.nextParticle = this.points[i + 1] || this.points[0];
         point.x = this.posTrail.x;
         point.y = this.posTrail.y;
-        point.node.setAttribute('cx',this.posTrail.x )
-        point.node.setAttribute('cy',this.posTrail.y);
+        point.node.setAttribute('x',this.posTrail.x )
+        point.node.setAttribute('y',this.posTrail.y);
         this.posTrail.x += (this.nextParticle.x - point.x) * (this.delta || 0.9);
         this.posTrail.y += (this.nextParticle.y - point.y) * (this.delta || 0.9);
       }

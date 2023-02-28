@@ -24,7 +24,7 @@ export class Cursor1 extends Cursors{
     }
     this.strokeWidthParticles = 1.5;
     this.strokeOpacityParticles = .15;
-    this.radiusDiff = 7;
+    this.radiusDiff = 1;
     this.radiusStart = this.radiusCursor*3;
     this.nbrParticles = Math.round((this.diagonalWindow() + this.radiusDiff - this.radiusStart) / this.radiusDiff);
     this.transitionParticles = {

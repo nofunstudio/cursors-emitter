@@ -5,7 +5,7 @@ export class Cursor2 extends Cursors{
 
   constructor(index) {
     super(index);
-    this.speed = !isTouchDevices ? 0.5 : 1;
+    this.speed = !isTouchDevices ? .2 : 1;
     this.delta = !isTouchDevices ? 0.04 : 0.04;
     this.cursor = true;
     this.tinyCursor = false;
@@ -15,23 +15,13 @@ export class Cursor2 extends Cursors{
 
   setParamsParticles() {
     this.nbrParticles =  !isTouchDevices ? 800 : 300;
-    this.radiusStart = this.diagonalWindow()/9;
-    this.radiusDiff = 0;
+    this.radiusStart = this.diagonalWindow()/8;
+    this.radiusDiff = -.2;
     this.sorting = "desc";
-    this.idGradient = "gradient";
-    this.fillParticles = `url('#${this.idGradient}')`;
-    this.gradientParticles = {
-      color1: getComputedStyle(document.body).getPropertyValue('--secondary'),
-      color2: getComputedStyle(document.body).getPropertyValue('--primary'),
+    
+    
+    
     };
   }
 
-  drawGradient() {
-    return `<defs>
-      <linearGradient id=${this.idGradient}>
-        <stop offset="0%"  stop-color="${this.gradientParticles.color1}" />
-        <stop offset="100%" stop-color="${this.gradientParticles.color2}" />
-      </linearGradient>
-    </defs>`
-  }
-}
+  
